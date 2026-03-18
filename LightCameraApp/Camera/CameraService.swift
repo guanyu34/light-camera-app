@@ -125,9 +125,6 @@ final class CameraService: NSObject, ObservableObject {
             }
 
             if self.isConfigured {
-                DispatchQueue.main.async {
-                    self.isSessionReady = true
-                }
                 completion?(true)
                 return
             }
@@ -168,10 +165,7 @@ final class CameraService: NSObject, ObservableObject {
                 self.photoOutput.isHighResolutionCaptureEnabled = true
                 self.isConfigured = true
 
-                DispatchQueue.main.async {
-                    self.isSessionReady = true
-                    self.statusText = "相机配置完成"
-                }
+                self.publishStatus("相机配置完成，正在启动预览…")
                 completion?(true)
             } catch {
                 self.publishError("相机初始化失败：\(error.localizedDescription)")

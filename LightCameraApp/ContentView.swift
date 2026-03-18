@@ -15,7 +15,7 @@ struct ContentView: View {
                         photoSection
                     }
                     .padding(.horizontal, 16)
-                    .padding(.top, max(proxy.safeAreaInsets.top, 16) + 8)
+                    .padding(.top, proxy.safeAreaInsets.top + 8)
                     .padding(.bottom, max(proxy.safeAreaInsets.bottom, 20) + 8)
                 }
             }
@@ -30,27 +30,26 @@ struct ContentView: View {
 
     private var previewSection: some View {
         ZStack(alignment: .topLeading) {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Color.gray.opacity(0.12))
-                .overlay {
-                    ZStack {
-                        if cameraService.authorizationStatus == .authorized {
-                            CameraPreviewView(session: cameraService.session)
-                                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-
-                            Color.white
-                                .opacity(cameraService.lightIntensity * 0.35)
-                                .blendMode(.screen)
-                                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-                        } else {
-                            Color.white.opacity(0.04)
-                        }
-
-                        previewStatusOverlay
-                    }
+            ZStack {
+                if cameraService.authorizationStatus == .authorized {
+                    CameraPreviewView(session: cameraService.session)
+                } else {
+                    Color.black.opacity(0.55)
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 420)
+
+                Color.white
+                    .opacity(cameraService.authorizationStatus == .authorized ? cameraService.lightIntensity * 0.35 : 0)
+                    .blendMode(.screen)
+
+                previewStatusOverlay
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 420)
+            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
 
             Label("补光相机", systemImage: "sun.max.fill")
                 .font(.headline)
